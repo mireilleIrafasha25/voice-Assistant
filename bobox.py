@@ -39,7 +39,30 @@ def CommandsList():
 def clearScreen():
     ''' clear the scrollable text box'''
     SR.scrollable_text_clearing()
-
+def search_wikipedia():
+    SR.speak("What would you like me to search on Wikipedia?")
+    query = SR.takeCommand()
+    if query:
+        wiki = wikipediaapi.Wikipedia(
+    language='en',
+    user_agent='MireilleAssistant/1.0 (mireillecatering@gmail.com)'
+     )
+    page = wiki.page(query)
+    if page.exists():
+            result = page.summary[:500]  # Limit summary to the first 500 characters
+            SR.speak("Here is what I found on Wikipedia.", result)
+           
+    else:
+            SR.speak("Sorry, I couldn't find anything on Wikipedia for that.")
+            return "No results found on Wikipedia."
+    return ""
+def search_on_google():
+    SR.speak("What would you like me to search on Google?")
+    query = SR.takeCommand()
+    if query:
+       search_url = f"https://www.google.com/search?q={query}"
+       SR.speak(f"Searching for {query} on Google.")
+       webbrowser.open(search_url) 
 def greet():
     conn = sqlite3.connect('bobox.db')
     mycursor=conn.cursor()
@@ -120,7 +143,7 @@ def mainframe():
 
             #calendar
             elif there_exists(['show me calendar','display calendar'],query):
-                SR.updating_ST(calendar.calendar(2021))
+                SR.updating_ST(calendar.calendar(2025))
 
             #google, youtube and location
 
@@ -187,10 +210,7 @@ def mainframe():
 
             #who is searcing mode
             elif there_exists(['who is','who the heck is','who the hell is','who is this'],query):
-                query=query.replace("wikipedia","")
-               # results=wikipedia.summary(query,sentences=1)
-                SR.speak("According to wikipdedia:  ")
-               # SR.speak(results)
+               search_on_google()
 
             #play music
             elif there_exists(['play music','play some music for me','like to listen some music'],query):
