@@ -1,4 +1,4 @@
-import datetime,wikipediaapi,webbrowser,os,random,requests,pyautogui,playsound,subprocess,time
+import datetime,wikipedia,webbrowser,os,random,requests,pyautogui,playsound,subprocess,time
 import urllib.request,bs4 as bs,sys,threading
 import Annex,wolframalpha
 from ttkthemes import themed_tk
@@ -16,12 +16,17 @@ except Exception as e:
     pass
 
 #setting chrome path
-chrome_path="C:/Program Files (x86)/Google/Chrome/Application/chrome.exe %s"
+chrome_path="C:\Program Files\Google\Chrome\Application\chrome.exe"
 
 def there_exists(terms,query):
     for term in terms:
         if term in query:
             return True
+
+def CommandsList():
+    '''show the command to which voice assistant is registered with'''
+    os.startfile('Commands List.txt')
+
 def play_music():
     try:
         pygame.mixer.init()
@@ -32,37 +37,10 @@ def play_music():
     except Exception as e:
         SR.speak("Unable to play music. Please check the file path.")
         print(e)
-def CommandsList():
-    '''show the command to which voice assistant is registered with'''
-    os.startfile('Commands List.txt')
-
 def clearScreen():
     ''' clear the scrollable text box'''
     SR.scrollable_text_clearing()
-def search_wikipedia():
-    SR.speak("What would you like me to search on Wikipedia?")
-    query = SR.takeCommand()
-    if query:
-        wiki = wikipediaapi.Wikipedia(
-    language='en',
-    user_agent='MireilleAssistant/1.0 (mireillecatering@gmail.com)'
-     )
-    page = wiki.page(query)
-    if page.exists():
-            result = page.summary[:500]  # Limit summary to the first 500 characters
-            SR.speak("Here is what I found on Wikipedia.", result)
-           
-    else:
-            SR.speak("Sorry, I couldn't find anything on Wikipedia for that.")
-            return "No results found on Wikipedia."
-    return ""
-def search_on_google():
-    SR.speak("What would you like me to search on Google?")
-    query = SR.takeCommand()
-    if query:
-       search_url = f"https://www.google.com/search?q={query}"
-       SR.speak(f"Searching for {query} on Google.")
-       webbrowser.open(search_url) 
+
 def greet():
     conn = sqlite3.connect('bobox.db')
     mycursor=conn.cursor()
@@ -85,7 +63,23 @@ def greet():
         SR.speak(random.choice(result)[0])
     conn.commit()
     conn.close()
-    SR.speak("\nMyself Bobox. How may I help you?")
+    SR.speak("\nI'm Bobox. How may I help you?")
+
+def search_on_google():
+    SR.speak("What would you like me to search on Google?")
+    query = SR.takeCommand()
+    if query:
+        search_url = f"https://www.google.com/search?q={query}"
+        SR.speak(f"Searching for {query} on Google.")
+        webbrowser.open(search_url)
+
+def search_google_images(query):
+    """Search Google Images based on the query."""
+    base_url = "https://www.google.com/search?tbm=isch&q="
+    search_url = base_url + query.replace(" ", "+")
+    webbrowser.open(search_url)
+    #print(f"Searching Google Images for: {query}")
+    SR.speak(f"Here are the images for {query}.")    
 def mainframe():
     """Logic for execution task based on query"""
     SR.scrollable_text_clearing()
@@ -100,20 +94,20 @@ def mainframe():
                 SR.speak("Searching wikipedia...")
                 if 'search wikipedia for' in query:
                     query=query.replace('search wikipedia for','')
-                    #results=wikipedia.summary(query,sentences=2)
+                    results=wikipedia.summary(query,sentences=2)
                     SR.speak("According to wikipedia:\n")
-                   # SR.speak(results)
+                    SR.speak(results)
                 elif 'from wikipedia' in query:
                     query=query.replace('from wikipedia','')
-                   # results=wikipedia.summary(query,sentences=2)
+                    results=wikipedia.summary(query,sentences=2)
                     SR.speak("According to wikipedia:\n")
-                  #  SR.speak(results)
+                    SR.speak(results)
             elif there_exists(['wikipedia'],query):
                 SR.speak("Searching wikipedia....")
                 query=query.replace("wikipedia","")
-               # results=wikipedia.summary(query,sentences=2)
+                results=wikipedia.summary(query,sentences=2)
                 SR.speak("According to wikipedia:\n")
-               # SR.speak(results)
+                SR.speak(results)
 
             #jokes
             elif there_exists(['tell me joke','tell me a joke','tell me some jokes','i would like to hear some jokes',"i'd like to hear some jokes",
@@ -126,7 +120,7 @@ def mainframe():
 
             #asking for name
             elif there_exists(["what is your name","what's your name","tell me your name",'who are you'],query):
-                SR.speak("My name is Bobox and I'm here to serve you.")
+                SR.speak("My name is Bonheur and I'm here to serve you.")
             #How are you
             elif there_exists(['how are you'],query):
                 conn = sqlite3.connect('bobox.db')
@@ -143,15 +137,19 @@ def mainframe():
 
             #calendar
             elif there_exists(['show me calendar','display calendar'],query):
-                SR.updating_ST(calendar.calendar(2025))
+                SR.updating_ST(calendar.calendar(2021))
 
             #google, youtube and location
-
             #playing on youtube
-            elif there_exists(['open youtube and play','on youtube']):
+            elif there_exists(['open youtube and play','on youtube'],query):
+                query='uwo yesu by papi clever and dorcas'
+                if 'on youtube' in query:
                     SR.speak("Opening youtube")
-                    webbrowser.open('http://www.youtube.com')
-                
+                    pywhatkit.playonyt(query.replace('on youtube',''))
+                else:
+                    SR.speak("Opening youtube")
+                    pywhatkit.playonyt(query.replace('open youtube and play ',''))
+                break
             elif there_exists(['play some songs on youtube','i would like to listen some music','i would like to listen some songs','play songs on youtube'],query):
                 SR.speak("Opening youtube")
                 pywhatkit.playonyt('play random songs')
@@ -161,14 +159,13 @@ def mainframe():
                 webbrowser.get(chrome_path).open("https://www.youtube.com")
                 break
             elif there_exists(['open google and search','google and search'],query):
-                url='https://google.com/search?q='+query[query.find('for')+4:]
-                webbrowser.get(chrome_path).open(url)
+                search_on_google()
                 break
             #image search
             elif there_exists(['show me images of','images of','display images'],query):
-                url="https://www.google.com/search?tbm=isch&q="+query[query.find('of')+3:]
-                webbrowser.get(chrome_path).open(url)
-                break
+                 query = SR.takeCommand()
+                 search_google_images(query)
+                 break
             elif there_exists(['search for','do a little searching for','show me results for','show me result for','start searching for'],query):
                 SR.speak("Searching.....")
                 if 'search for' in query:
@@ -210,7 +207,10 @@ def mainframe():
 
             #who is searcing mode
             elif there_exists(['who is','who the heck is','who the hell is','who is this'],query):
-               search_on_google()
+                query=query.replace("wikipedia","")
+                results=wikipedia.summary(query,sentences=1)
+                SR.speak("According to wikipdedia:  ")
+                SR.speak(results)
 
             #play music
             elif there_exists(['play music','play some music for me','like to listen some music'],query):
@@ -230,9 +230,9 @@ def mainframe():
                 del whatsapp
             #what is meant by
             elif there_exists(['what is meant by','what is mean by'],query):
-                #results=wikipedia.summary(query,sentences=2)
+                results=wikipedia.summary(query,sentences=2)
                 SR.speak("According to wikipedia:\n")
-               # SR.speak(results)
+                SR.speak(results)
 
             #taking photo
             elif there_exists(['take a photo','take a selfie','take my photo','take photo','take selfie','one photo please','click a photo'],query):
@@ -299,8 +299,8 @@ def mainframe():
 
             #opening software applications
             elif there_exists(['open chrome'],query):
-                SR.speak("Opening Chrome")
-                webbrowser.open("http://chrome.google.com")
+                SR.speak("Opening chrome")
+                os.startfile(r'C:\Program Files (x86)\Google\Chrome\Application\chrome.exe')
                 break
             elif there_exists(['open notepad plus plus','open notepad++','open notepad ++'],query):
                 SR.speak('Opening notepad++')
@@ -342,9 +342,6 @@ def mainframe():
                 SR.speak("Opening whatsApp")
                 os.startfile(r'C:\Users\Vishal\AppData\Local\WhatsApp\WhatsApp.exe')
                 break
-            elif there_exists(['open file called command List','open command'],query):
-                SR.speak("Opening command List")
-                os.startfile("Commands List.txt")
             elif there_exists(['open settings','open control panel','open this computer setting Window','open computer setting Window'   ,'open computer settings','open setting','show me settings','open my computer settings'],query):
                 SR.speak("Opening settings...")
                 os.startfile('C:\Windows\System32\control.exe')
@@ -424,9 +421,6 @@ def mainframe():
                     SR.speak(next(res.results).text)
                 except:
                     print("Internet Connection Error")
-            elif there_exists(['Thank you','ooh thank you','Thanks']):
-                SR.speak("You're welcome.")
-                break
             elif there_exists(['+','-','*','x','/','plus','add','minus','subtract','divide','multiply','divided','multiplied'],query):
                 try:
                     res=app.query(query)
@@ -442,6 +436,7 @@ def mainframe():
 def gen(n):
     for i in range(n):
         yield i
+
 class MainframeThread(threading.Thread):
     def __init__(self, threadID, name):
         threading.Thread.__init__(self)
@@ -462,7 +457,7 @@ if __name__=="__main__":
         root.set_theme("winnative")
         root.geometry("{}x{}+{}+{}".format(745,360,int(root.winfo_screenwidth()/2 - 745/2),int(root.winfo_screenheight()/2 - 360/2)))
         root.resizable(0,0)
-        root.title("Bobox Assistance")
+        root.title("Bobox Assistant")
         root.iconbitmap('bobox.ico')
         root.configure(bg='#2c4557')
         scrollable_text=scrolledtext.ScrolledText(root,state='disabled',height=15,width=87,relief='sunken',bd=5,wrap=tk.WORD,bg='#add8e6',fg='#800000')
