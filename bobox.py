@@ -233,7 +233,10 @@ def mainframe():
                 results=wikipedia.summary(query,sentences=2)
                 SR.speak("According to wikipedia:\n")
                 SR.speak(results)
-
+           #opening file
+            elif there_exists(['open file','open command list'],query):
+                SR.speak("Opening file")
+                os.startfile("Commands List.txt")
             #taking photo
             elif there_exists(['take a photo','take a selfie','take my photo','take photo','take selfie','one photo please','click a photo'],query):
                 takephoto=Annex.camera()
@@ -296,7 +299,9 @@ def mainframe():
                 SR.speak(f"Today is {strDay}")
             elif there_exists(['what day it is','what day is today','which day is today',"today's day name please"],query):
                 SR.speak(f"Today is {datetime.datetime.now().strftime('%A')}")
-
+            elif there_exists(['Thanks','Thank you','I appreciate you','Thanks for helping']):
+                SR.speak("You're welcome!")
+                break
             #opening software applications
             elif there_exists(['open chrome'],query):
                 SR.speak("Opening chrome")
