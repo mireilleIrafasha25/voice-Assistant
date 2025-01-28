@@ -10,6 +10,7 @@ import sqlite3,pyjokes,pywhatkit
 from functools import partial
 import getpass,calendar
 import pygame
+from tkinter import PhotoImage
 try:
     app=wolframalpha.Client("JPK4EE-L7KR3XWP9A")  #API key for wolframalpha
 except Exception as e:
@@ -463,7 +464,9 @@ if __name__=="__main__":
         root.geometry("{}x{}+{}+{}".format(745,360,int(root.winfo_screenwidth()/2 - 745/2),int(root.winfo_screenheight()/2 - 360/2)))
         root.resizable(0,0)
         root.title("Bobox Assistant")
-        root.iconbitmap('bobox.ico')
+        image = Image.open('mic-logo.jpg')
+        icon = ImageTk.PhotoImage(image)
+        root.iconphoto(False, icon)
         root.configure(bg='#2c4557')
         scrollable_text=scrolledtext.ScrolledText(root,state='disabled',height=15,width=87,relief='sunken',bd=5,wrap=tk.WORD,bg='#add8e6',fg='#800000')
         scrollable_text.place(x=10,y=10)
