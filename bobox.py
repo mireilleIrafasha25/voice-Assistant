@@ -467,11 +467,11 @@ if __name__=="__main__":
         root.configure(bg='#2c4557')
         scrollable_text=scrolledtext.ScrolledText(root,state='disabled',height=15,width=87,relief='sunken',bd=5,wrap=tk.WORD,bg='#add8e6',fg='#800000')
         scrollable_text.place(x=10,y=10)
-        mic_img=Image.open("Mic.png")
+        mic_img=Image.open("mic2.jpg")
         mic_img = mic_img.resize((55, 55), Image.Resampling.LANCZOS)
         mic_img=ImageTk.PhotoImage(mic_img)
-        Speak_label=tk.Label(root,text="SPEAK:",fg="#FFD700",font='"Times New Roman" 12 ',borderwidth=0,bg='#2c4557')
-        Speak_label.place(x=250,y=300)
+        """Speak_label=tk.Label(root,text="SPEAK:",fg="#FFD700",font='"Times New Roman" 12 ',borderwidth=0,bg='#2c4557')
+        Speak_label.place(x=250,y=300)"""
         """Setting up objects"""
         SR=Annex.SpeakRecog(scrollable_text)    #Speak and Recognition class instance
         Listen_Button=tk.Button(root,image=mic_img,borderwidth=0,activebackground='#2c4557',bg='#2c4557',command=Launching_thread)
