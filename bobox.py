@@ -434,8 +434,6 @@ def mainframe():
     except Exception as e:
         pass
 
-
-
 def gen(n):
     for i in range(n):
         yield i
