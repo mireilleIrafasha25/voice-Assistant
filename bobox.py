@@ -121,10 +121,10 @@ def mainframe():
 
             #asking for name
             elif there_exists(["what is your name","what's your name","tell me your name",'who are you'],query):
-                SR.speak("My name is Bonheur and I'm here to serve you.")
+                SR.speak("My name is Heisenberg and I'm here to serve you.")
             #How are you
             elif there_exists(['how are you'],query):
-                conn = sqlite3.connect('bobox.db')
+                conn = sqlite3.connect('Heisenberg.db')
                 mycursor=conn.cursor()
                 mycursor.execute('select sentences from howareyou')
                 result=mycursor.fetchall()
@@ -141,7 +141,7 @@ def mainframe():
                 SR.updating_ST(calendar.calendar(2021))
 
             #google, youtube and location
-            #playing on youtube
+            # playing on youtube
             elif there_exists(['open youtube and play','on youtube'],query):
                 query='uwo yesu by papi clever and dorcas'
                 if 'on youtube' in query:
@@ -164,9 +164,9 @@ def mainframe():
                 break
             #image search
             elif there_exists(['show me images of','images of','display images'],query):
-                 query = SR.takeCommand()
-                 search_google_images(query)
-                 break
+                url="https://www.google.com/search?tbm=isch&q="+query[query.find('of')+3:]
+                webbrowser.get(chrome_path).open(url)
+                break
             elif there_exists(['search for','do a little searching for','show me results for','show me result for','start searching for'],query):
                 SR.speak("Searching.....")
                 if 'search for' in query:
@@ -185,7 +185,7 @@ def mainframe():
 
             elif there_exists(['open google'],query):
                 SR.speak("Opening google")
-                webbrowser.open("http://www.google.com")
+                webbrowser.get(chrome_path).open("https://www.google.com")
                 break
             elif there_exists(['find location of','show location of','find location for','show location for'],query):
                 if 'of' in query:
@@ -213,7 +213,7 @@ def mainframe():
                 SR.speak("According to wikipdedia:  ")
                 SR.speak(results)
 
-            #play music
+           #play music
             elif there_exists(['play music','play some music for me','like to listen some music'],query):
                 SR.speak("Playing musics")
                 play_music()
@@ -234,10 +234,7 @@ def mainframe():
                 results=wikipedia.summary(query,sentences=2)
                 SR.speak("According to wikipedia:\n")
                 SR.speak(results)
-           #opening file
-            elif there_exists(['open file','open command list'],query):
-                SR.speak("Opening file")
-                os.startfile("Commands List.txt")
+
             #taking photo
             elif there_exists(['take a photo','take a selfie','take my photo','take photo','take selfie','one photo please','click a photo'],query):
                 takephoto=Annex.camera()
@@ -300,9 +297,7 @@ def mainframe():
                 SR.speak(f"Today is {strDay}")
             elif there_exists(['what day it is','what day is today','which day is today',"today's day name please"],query):
                 SR.speak(f"Today is {datetime.datetime.now().strftime('%A')}")
-            elif there_exists(['Thanks','Thank you','I appreciate you','Thanks for helping']):
-                SR.speak("You're welcome!")
-                break
+
             #opening software applications
             elif there_exists(['open chrome'],query):
                 SR.speak("Opening chrome")
@@ -438,6 +433,8 @@ def mainframe():
                 SR.speak("Sorry it did not match with any commands that i'm registered with. Please say it again.")
     except Exception as e:
         pass
+
+
 
 def gen(n):
     for i in range(n):
