@@ -121,10 +121,10 @@ def mainframe():
 
             #asking for name
             elif there_exists(["what is your name","what's your name","tell me your name",'who are you'],query):
-                SR.speak("My name is Heisenberg and I'm here to serve you.")
+                SR.speak("My name is Bobox and I'm here to serve you.")
             #How are you
             elif there_exists(['how are you'],query):
-                conn = sqlite3.connect('Heisenberg.db')
+                conn = sqlite3.connect('bobox.db')
                 mycursor=conn.cursor()
                 mycursor.execute('select sentences from howareyou')
                 result=mycursor.fetchall()
